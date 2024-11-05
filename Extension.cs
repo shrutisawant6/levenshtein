@@ -1,4 +1,4 @@
-﻿namespace LevenshteinAlgorithm
+namespace LevenshteinAlgorithm
 {
     public static class Extension
     {
@@ -65,6 +65,10 @@
         {
             try
             {
+                var cancellationTokenSource = new CancellationTokenSource();
+                var cancellationToken = cancellationTokenSource.Token;
+                cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(1));//to avoid prolonged execution for exceptionally long strings
+
                 var formattedFirstString = firstString.ToUpperWithoutSpaces();
                 var formattedSecondString = secondString.ToUpperWithoutSpaces();
 
@@ -74,7 +78,7 @@
                 if (string.IsNullOrEmpty(formattedFirstString) || string.IsNullOrEmpty(formattedSecondString))
                     return false;
 
-                return formattedFirstString.CompareStringsAlgorithm(formattedSecondString);
+                return formattedFirstString.CompareStringsAlgorithm(formattedSecondString, cancellationToken);
             }
             catch
             {
@@ -85,7 +89,7 @@
         //LEVENSHTEIN ALGORITHM checks if two strings are similar
         //Similarity is validated based on the length of each string 
         //Matrix is formed to compare the strings and their match, and how many addition/deletion/substituion are needed of each character to macth these two 
-        private static bool CompareStringsAlgorithm(this string firstString, string secondString)
+        private static bool CompareStringsAlgorithm(this string firstString, string secondString, CancellationToken token)
         {
             int maxLength = Math.Max(firstString.Length, secondString.Length);
             decimal percentageOfLongerString = 0.3m; //30% of the longer string length
@@ -96,15 +100,22 @@
             var matrix = new int[len1 + 1, len2 + 1];
 
             for (int s1 = 0; s1 <= len1; s1++)
+            {
+                token.ThrowIfCancellationRequested();
                 matrix[s1, 0] = s1;
+            }
 
             for (int s2 = 0; s2 <= len2; s2++)
+            {
+                token.ThrowIfCancellationRequested();
                 matrix[0, s2] = s2;
+            }
 
             for (int s1 = 1; s1 <= len1; s1++)
             {
                 for (int s2 = 1; s2 <= len2; s2++)
                 {
+                    token.ThrowIfCancellationRequested();
                     int cost = firstString[s1 - 1] == secondString[s2 - 1] ? 0 : 1;
 
                     matrix[s1, s2] = Math.Min(Math.Min(
