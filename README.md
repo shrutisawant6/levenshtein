@@ -1,6 +1,6 @@
 # Levenshtein Algorithm
 
-The Levenshtein algorithm (also known as edit distance) is a way to measure $${\color{orange}how \space different \space two \space strings \space are}$$ by counting the number of changes (edits) needed to make one string exactly like the other.
+The Levenshtein algorithm (also known as edit distance) is a way to measure $${\color{orange}how \space different \space two \space strings \space are}$$ by counting the number of changes (edits) needed to make one string exactly like the other. 
 
 **Demonstration:**
 
